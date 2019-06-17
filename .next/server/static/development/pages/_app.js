@@ -311,7 +311,7 @@ function (_App) {
                 pageProps = _context.sent;
 
               case 16:
-                isSiteOwner = user && user["https://filipjerga.herokuapp.com/role"] === 'siteOwner';
+                isSiteOwner = user && user["https://milind-portfolio.herokuapp.com/role"] === 'siteOwner';
                 auth = {
                   user: user,
                   isAuthenticated: !!user,
@@ -380,7 +380,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
-var CLIENT_ID = "NfvS9nw81ItncHJKPHCaAvwD9ChNWYn3";
+var CLIENT_ID = "BcWtmT44o3qekMok0eJPxkW581XJWLJH";
 
 var Auth0 =
 /*#__PURE__*/
@@ -389,7 +389,7 @@ function () {
     _classCallCheck(this, Auth0);
 
     this.auth0 = new auth0_js__WEBPACK_IMPORTED_MODULE_1___default.a.WebAuth({
-      domain: 'eincode.eu.auth0.com',
+      domain: 'dev-j74a-lgr.auth0.com',
       clientID: CLIENT_ID,
       redirectUri: "".concat("http://localhost:3000", "/callback"),
       responseType: 'token id_token',
@@ -450,7 +450,7 @@ function () {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_4___default.a.get('https://eincode.eu.auth0.com/.well-known/jwks.json');
+                return axios__WEBPACK_IMPORTED_MODULE_4___default.a.get('https://dev-j74a-lgr.auth0.com/.well-known/jwks.json');
 
               case 2:
                 res = _context.sent;
