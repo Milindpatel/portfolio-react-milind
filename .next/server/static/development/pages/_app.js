@@ -311,7 +311,7 @@ function (_App) {
                 pageProps = _context.sent;
 
               case 16:
-                isSiteOwner = user && user[process.env.NAMESPACE + '/role'] === 'siteOwner';
+                isSiteOwner = user && user["https://filipjerga.herokuapp.com/role"] === 'siteOwner';
                 auth = {
                   user: user,
                   isAuthenticated: !!user,
@@ -380,7 +380,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
-var CLIENT_ID = process.env.CLIENT_ID;
+var CLIENT_ID = "NfvS9nw81ItncHJKPHCaAvwD9ChNWYn3";
 
 var Auth0 =
 /*#__PURE__*/
@@ -391,7 +391,7 @@ function () {
     this.auth0 = new auth0_js__WEBPACK_IMPORTED_MODULE_1___default.a.WebAuth({
       domain: 'eincode.eu.auth0.com',
       clientID: CLIENT_ID,
-      redirectUri: "".concat(process.env.BASE_URL, "/callback"),
+      redirectUri: "".concat("http://localhost:3000", "/callback"),
       responseType: 'token id_token',
       scope: 'openid profile'
     });
@@ -429,7 +429,7 @@ function () {
     value: function logout() {
       js_cookie__WEBPACK_IMPORTED_MODULE_2___default.a.remove('jwt');
       this.auth0.logout({
-        returnTo: process.env.BASE_URL,
+        returnTo: "http://localhost:3000",
         clientID: CLIENT_ID
       });
     }

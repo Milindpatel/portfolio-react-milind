@@ -12,6 +12,30 @@
     "/_error": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
+    ],
+    "/index": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/about": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/portfolios": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/cv": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/blogs": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
+    ],
+    "/": [
+      "static/runtime/webpack.js",
+      "static/runtime/main.js"
     ]
   }
 }
