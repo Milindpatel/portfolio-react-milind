@@ -12,7 +12,7 @@ exports.checkJWT = jwt({
     jwksRequestsPerMinute: 50,
     jwksUri: 'https://dev-j74a-lgr.auth0.com/.well-known/jwks.json'
   }),
-  audience: 'NfvS9nw81ItncHJKPHCaAvwD9ChNWYn3',
+  audience: 'BcWtmT44o3qekMok0eJPxkW581XJWLJH',
   issuer: 'https://dev-j74a-lgr.auth0.com/',
   algorithms: ['RS256']
 })
