@@ -1,76 +1,38 @@
 const Portfolio = require('../models/portfolio');
+const { pick } = require('../services/sanitize');
 
-exports.getPortfolios = (req, res) => {
+exports.getPortfolios = async (req, res) => {
+  const portfolios = await Portfolio.find({}).sort({ startDate: -1 }).select('-__v');
+  res.json(portfolios);
+};
 
-  Portfolio.find({})
-           .sort({'startDate': 1})
-           .exec((err, allPortfolios) => {
-    if (err) {
-      return res.status(422).send(err);
-    }
+exports.getPortfolioById = async (req, res) => {
+  const portfolio = await Portfolio.findById(req.params.id).select('-__v');
+  if (!portfolio) return res.status(404).json({ title: 'Not found' });
+  res.json(portfolio);
+};
 
-    return res.json(allPortfolios);
-  });
-}
+exports.savePortfolio = async (req, res) => {
+  const portfolio = new Portfolio(pick(req.body, Portfolio.editableFields));
+  portfolio.userId = req.auth.sub;
+  await portfolio.save();
+  res.status(201).json(portfolio);
+};
 
-exports.getPortfolioById = (req, res) => {
-  const portfolioId = req.params.id;
+exports.updatePortfolio = async (req, res) => {
+  const portfolio = await Portfolio.findById(req.params.id);
+  if (!portfolio) return res.status(404).json({ title: 'Not found' });
 
-  Portfolio.findById(portfolioId)
-           .select('-__v')
-           .exec((err, foundPortfolio) => {
-    if (err) {
-      return res.status(422).send(err);
-    }
+  const updates = pick(req.body, Portfolio.editableFields);
+  // An explicit null end date means "still working here".
+  if (req.body && req.body.endDate === null) updates.endDate = undefined;
+  portfolio.set(updates);
+  await portfolio.save();
+  res.json(portfolio);
+};
 
-    return res.json(foundPortfolio);
-  });
-}
-
-exports.savePortfolio = (req, res) => {
-  const portfolioData = req.body;
-  const userId = req.user && req.user.sub;
-  const portfolio = new Portfolio(portfolioData);
-  portfolio.userId = userId;
-
-  portfolio.save((err, createdPortfolio) => {
-    if (err) {
-      return res.status(422).send(err);
-    }
-
-    return res.json(createdPortfolio);
-  });
-}
-
-
-exports.updatePortfolio = (req, res) => {
-  const portfolioId = req.params.id;
-  const portfolioData = req.body;
-
-  Portfolio.findById(portfolioId, (err, foundPortfolio) => {
-    if (err) {
-      return res.status(422).send(err);
-    }
-
-    foundPortfolio.set(portfolioData);
-    foundPortfolio.save((err, savedPortfolio) => {
-      if (err) {
-        return res.status(422).send(err);
-      }
-
-      return res.json(savedPortfolio);
-    });
-  })
-}
-
-exports.deletePortfolio = (req, res) => {
-  const portfolioId = req.params.id;
-
-  Portfolio.deleteOne({_id: portfolioId}, (err, deletedPortfolio) => {
-    if (err) {
-      return res.status(422).send(err);
-    }
-
-    return res.json({status: 'DELETED'});
-  })
-}
+exports.deletePortfolio = async (req, res) => {
+  const deleted = await Portfolio.findByIdAndDelete(req.params.id);
+  if (!deleted) return res.status(404).json({ title: 'Not found' });
+  res.json({ status: 'DELETED' });
+};

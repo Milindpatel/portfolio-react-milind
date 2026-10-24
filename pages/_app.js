@@ -1,43 +1,24 @@
-import React from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import { ToastContainer } from 'react-toastify';
-import Fonts from '../helpers/Fonts';
+import { clientAuth, isSiteOwner, serverAuth } from '../lib/auth0';
 
-import auth0 from '../services/auth0';
-
-// Stylings
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/main.scss';
+import 'react-datepicker/dist/react-datepicker.css';
 import 'react-toastify/dist/ReactToastify.css';
+import '../styles/main.scss';
 
-export default class MyApp extends App {
-
-  static async getInitialProps({ Component, router, ctx }) {
-    let pageProps = {};
-    const user = process.browser ? await auth0.clientAuth() : await auth0.serverAuth(ctx.req);
-
-    if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx)
-    }
-
-    const isSiteOwner = user && user[process.env.NAMESPACE + '/role'] === 'siteOwner';
-    const auth = { user, isAuthenticated: !!user, isSiteOwner };
-
-    return { pageProps, auth }
-  }
-
-  componentDidMount() {
-    // Fonts();
-  }
-
-  render () {
-    const { Component, pageProps, auth } = this.props
-
-    return (
-      <Container>
-        <ToastContainer />
-        <Component {...pageProps} auth={auth}/>
-      </Container>
-    )
-  }
+export default function MyApp({ Component, pageProps, auth }) {
+  return (
+    <>
+      <ToastContainer />
+      <Component {...pageProps} auth={auth} />
+    </>
+  );
 }
+
+MyApp.getInitialProps = async (appContext) => {
+  const { ctx } = appContext;
+  const user = typeof window === 'undefined' ? await serverAuth(ctx.req) : await clientAuth();
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps, auth: { user: user || null, isAuthenticated: !!user, isSiteOwner: isSiteOwner(user) } };
+};

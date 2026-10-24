@@ -1,17 +1,27 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const setStringType = (maxLength) => ({ type: String, required: true, maxlength: maxLength })
+const requiredString = (maxlength) => ({ type: String, required: true, trim: true, maxlength });
 
-const portfolioSchema = new Schema({
-  userId: setStringType(512),
-  title: setStringType(256),
-  company: setStringType(256),
-  location: setStringType(128),
-  position: setStringType(256),
-  description: setStringType(2048),
-  startDate: { type: Date, required: true},
-  endDate: Date
+const portfolioSchema = new mongoose.Schema({
+  userId: requiredString(512),
+  title: requiredString(256),
+  company: requiredString(256),
+  location: requiredString(128),
+  position: requiredString(256),
+  description: requiredString(2048),
+  startDate: { type: Date, required: true },
+  endDate: {
+    type: Date,
+    validate: {
+      validator(value) {
+        return !value || !this.startDate || value >= this.startDate;
+      },
+      message: 'End date cannot be before start date',
+    },
+  },
 });
 
-module.exports = mongoose.model('Portfolio', portfolioSchema);
+/** Fields a client is allowed to set. */
+portfolioSchema.statics.editableFields = ['title', 'company', 'location', 'position', 'description', 'startDate', 'endDate'];
+
+module.exports = mongoose.models.Portfolio || mongoose.model('Portfolio', portfolioSchema);

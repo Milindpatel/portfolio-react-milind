@@ -1,25 +1,15 @@
 const express = require('express');
-const router = express.Router();
+const ctrl = require('../controllers/portfolio');
 
-const portfolioCtrl = require('../controllers/portfolio');
-const authService = require('../services/auth');
+module.exports = ({ checkJWT, checkRole }, ownerRole) => {
+  const router = express.Router();
+  const owner = [checkJWT, checkRole(ownerRole)];
 
-router.post('', authService.checkJWT,
-                authService.checkRole('siteOwner'),
-                portfolioCtrl.savePortfolio);
+  router.get('/', ctrl.getPortfolios);
+  router.get('/:id', ctrl.getPortfolioById);
+  router.post('/', owner, ctrl.savePortfolio);
+  router.patch('/:id', owner, ctrl.updatePortfolio);
+  router.delete('/:id', owner, ctrl.deletePortfolio);
 
-router.get('', portfolioCtrl.getPortfolios);
-
-router.get('/:id', portfolioCtrl.getPortfolioById);
-
-router.patch('/:id', authService.checkJWT,
-               authService.checkRole('siteOwner'),
-               portfolioCtrl.updatePortfolio);
-
-router.delete('/:id', authService.checkJWT,
-               authService.checkRole('siteOwner'),
-               portfolioCtrl.deletePortfolio);
-
-
-module.exports = router;
-
+  return router;
+};

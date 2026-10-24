@@ -1,150 +1,67 @@
-import React from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import ActiveLink from '../ActiveLink';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu} from 'reactstrap';
+import { useRouter } from 'next/router';
+import { Collapse, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem } from 'reactstrap';
+import { login, logout } from '../../lib/auth0';
 
-import auth0 from '../../services/auth0';
-
-const BsNavLink = (props) => {
-  const { route, title } = props;
-  const className = props.className || "";
-
+function NavLink({ href, title, className = '' }) {
+  const { asPath } = useRouter();
+  const active = asPath === href ? 'active' : '';
   return (
-    <ActiveLink activeClassName="active" route={route}>
-      <a className={`nav-link port-navbar-link ${className}`}> {title} </a>
-    </ActiveLink>
-  )
+    <Link href={href} className={`nav-link port-navbar-link ${className} ${active}`}>
+      {title}
+    </Link>
+  );
 }
 
-const Login = () => {
-  return (
-    <span onClick={auth0.login} className="nav-link port-navbar-link clickable"> Login </span>
-  )
-}
+function BlogMenu({ isSiteOwner }) {
+  const [open, setOpen] = useState(false);
 
-const Logout = () => {
-  return (
-    <span onClick={auth0.logout} className="nav-link port-navbar-link clickable"> Logout </span>
-  )
-}
-
-export default class Header extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isOpen: false,
-      dropdownOpen: false
-    };
-
-    this.toggle = this.toggle.bind(this);
-    this.toggleDropdown = this.toggleDropdown.bind(this);
-  }
-
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
-
-  toggleDropdown() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
-
-  renderBlogMenu() {
-    const { isSiteOwner } = this.props;
-
-    if (isSiteOwner) {
-      return (
-        <Dropdown className="port-navbar-link port-dropdown-menu" nav isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
-          <DropdownToggle className="port-dropdown-toggle" nav caret>
-            Blog
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem>
-              <BsNavLink className="port-dropdown-item"
-                         route="/blogs"
-                         title="Blogs" />
-            </DropdownItem>
-            <DropdownItem>
-              <BsNavLink className="port-dropdown-item"
-                         route="/blogs/new"
-                         title="Create a Blog" />
-            </DropdownItem>
-            <DropdownItem>
-              <BsNavLink className="port-dropdown-item"
-                         route="/blogs/dashboard"
-                         title="Blogs Dashboard" />
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      )
-    }
-
+  if (!isSiteOwner) {
     return (
       <NavItem className="port-navbar-item">
-        <BsNavLink route="/blogs" title="Blog" />
+        <NavLink href="/blogs" title="Blog" />
       </NavItem>
-    )
-  }
-
-  render() {
-    const { isAuthenticated, user, className } = this.props;
-    const { isOpen } = this.state;
-
-    const menuOpenClass = isOpen ? 'menu-open' : 'menu-close';
-
-    return (
-      <div>
-        <Navbar className={`port-navbar port-nav-base absolute ${className} ${menuOpenClass}`} color="transparent" dark expand="md">
-          <NavbarBrand className="port-navbar-brand" href="/">Filip Jerga</NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem className="port-navbar-item">
-                <BsNavLink route="/" title="Home" />
-              </NavItem>
-              <NavItem className="port-navbar-item">
-                <BsNavLink route="/about" title="About" />
-              </NavItem>
-              <NavItem className="port-navbar-item">
-                <BsNavLink route="/portfolios" title="Portfolio" />
-              </NavItem>
-              {this.renderBlogMenu()}
-              <NavItem className="port-navbar-item">
-                <BsNavLink route="/cv" title="Cv" />
-              </NavItem>
-              { !isAuthenticated &&
-                <NavItem className="port-navbar-item">
-                  <Login />
-                </NavItem>
-              }
-              { isAuthenticated &&
-                <NavItem className="port-navbar-item">
-                  <Logout />
-                </NavItem>
-              }
-            </Nav>
-          </Collapse>
-        </Navbar>
-      </div>
     );
   }
+
+  return (
+    <Dropdown className="port-navbar-link port-dropdown-menu" nav isOpen={open} toggle={() => setOpen(!open)}>
+      <DropdownToggle className="port-dropdown-toggle" nav caret>
+        Blog
+      </DropdownToggle>
+      <DropdownMenu>
+        <DropdownItem tag="div"><NavLink className="port-dropdown-item" href="/blogs" title="Blogs" /></DropdownItem>
+        <DropdownItem tag="div"><NavLink className="port-dropdown-item" href="/blogs/new" title="Create a Blog" /></DropdownItem>
+        <DropdownItem tag="div"><NavLink className="port-dropdown-item" href="/blogs/dashboard" title="Blogs Dashboard" /></DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
 }
 
+export default function Header({ isAuthenticated, isSiteOwner, className = '' }) {
+  const [isOpen, setIsOpen] = useState(false);
 
-
-
+  return (
+    <Navbar className={`port-navbar port-nav-base absolute ${className} ${isOpen ? 'menu-open' : 'menu-close'}`} color="transparent" dark expand="md">
+      <NavbarBrand className="port-navbar-brand" tag={Link} href="/">
+        Milind Patel
+      </NavbarBrand>
+      <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
+      <Collapse isOpen={isOpen} navbar>
+        <Nav className="ms-auto" navbar>
+          <NavItem className="port-navbar-item"><NavLink href="/" title="Home" /></NavItem>
+          <NavItem className="port-navbar-item"><NavLink href="/about" title="About" /></NavItem>
+          <NavItem className="port-navbar-item"><NavLink href="/portfolios" title="Portfolio" /></NavItem>
+          <BlogMenu isSiteOwner={isSiteOwner} />
+          <NavItem className="port-navbar-item"><NavLink href="/cv" title="CV" /></NavItem>
+          <NavItem className="port-navbar-item">
+            <button type="button" onClick={isAuthenticated ? logout : login} className="nav-link port-navbar-link btn btn-link">
+              {isAuthenticated ? 'Logout' : 'Login'}
+            </button>
+          </NavItem>
+        </Nav>
+      </Collapse>
+    </Navbar>
+  );
+}

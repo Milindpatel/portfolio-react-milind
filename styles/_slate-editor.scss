@@ -1,3 +1,6 @@
+@use 'shared/colors' as *;
+@use 'shared/mixins' as *;
+
 
 
 .controll-menu {
@@ -14,5 +17,39 @@
   .status-box {
     display: inline-block;
     margin-right: 10px;
+  }
+}
+
+.slate-editable {
+  min-height: 300px;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.slate-hover-menu {
+  position: absolute;
+  z-index: 1000;
+  top: -10000px;
+  left: -10000px;
+  padding: 6px 8px;
+  opacity: 0;
+  background-color: #222;
+  border-radius: 4px;
+  transition: opacity 0.4s;
+
+  button {
+    margin: 0 2px;
+    padding: 2px 6px;
+    border: 0;
+    background: none;
+    color: #aaa;
+    font-weight: 700;
+    cursor: pointer;
+
+    &.active,
+    &:hover {
+      color: #fff;
+    }
   }
 }

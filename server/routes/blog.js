@@ -1,30 +1,18 @@
 const express = require('express');
-const router = express.Router();
+const ctrl = require('../controllers/blog');
 
-const blogCtrl = require('../controllers/blog');
-const authService = require('../services/auth');
+module.exports = ({ checkJWT, checkRole }, ownerRole) => {
+  const router = express.Router();
+  const owner = [checkJWT, checkRole(ownerRole)];
 
-router.get('', blogCtrl.getBlogs);
+  router.get('/', ctrl.getBlogs);
+  router.get('/me', owner, ctrl.getUserBlogs);
+  router.get('/s/:slug', ctrl.getBlogBySlug);
+  // Drafts are only visible to the owner.
+  router.get('/:id', owner, ctrl.getBlogById);
+  router.post('/', owner, ctrl.createBlog);
+  router.patch('/:id', owner, ctrl.updateBlog);
+  router.delete('/:id', owner, ctrl.deleteBlog);
 
-router.get('/me', authService.checkJWT,
-                  authService.checkRole('siteOwner'),
-                  blogCtrl.getUserBlogs);
-
-router.get('/:id', blogCtrl.getBlogById);
-
-router.get('/s/:slug', blogCtrl.getBlogBySlug);
-
-router.post('', authService.checkJWT,
-                authService.checkRole('siteOwner'),
-                blogCtrl.createBlog);
-
-router.patch('/:id', authService.checkJWT,
-                authService.checkRole('siteOwner'),
-                blogCtrl.updateBlog);
-
-router.delete('/:id', authService.checkJWT,
-                authService.checkRole('siteOwner'),
-                blogCtrl.deleteBlog);
-
-module.exports = router;
-
+  return router;
+};

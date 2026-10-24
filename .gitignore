@@ -1,4 +1,9 @@
 /node_modules
 /.next
-/server/.next
-/server/config/dev.js
+/out
+/coverage
+.env
+.env*.local
+*.log
+.DS_Store
+.vscode/

@@ -1,21 +1,13 @@
-import { Button, FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Input, Label } from 'reactstrap';
 
-
-const PortInput = ({
-  label,
-  type,
-  field, // { name, value, onChange, onBlur }
-  form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
-  ...props
-}) => {
+/** Formik field rendered as a Bootstrap input with its validation message. */
+export default function PortInput({ label, type, field, form: { touched, errors }, ...props }) {
+  const id = `field-${field.name}`;
   return (
-  <FormGroup>
-    <Label>{label}</Label>
-    <Input type={type} {...field} {...props} />
-    {touched[field.name] &&
-      errors[field.name] && <div className="error">{errors[field.name]}</div>}
-  </FormGroup>
-)};
-
-
-export default PortInput;
+    <FormGroup>
+      <Label for={id}>{label}</Label>
+      <Input id={id} type={type} {...field} {...props} invalid={!!(touched[field.name] && errors[field.name])} />
+      {touched[field.name] && errors[field.name] && <div className="error">{errors[field.name]}</div>}
+    </FormGroup>
+  );
+}

@@ -1,16 +1,16 @@
-@import './shared/colors';
-@import './shared/mixins';
+@use 'shared/colors' as *;
+@use 'shared/mixins' as *;
 
 // PAGES
-@import './index';
-@import './portfolios';
-@import './blogs';
-@import './about';
-@import './cv';
+@use 'index';
+@use 'portfolios';
+@use 'blogs';
+@use 'about';
+@use 'cv';
 
 // COMPONENTS
-@import './header';
-@import './slate-editor';
+@use 'header';
+@use 'slate-editor';
 
 html, body {
   height: 100%;

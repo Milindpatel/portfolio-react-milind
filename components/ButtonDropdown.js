@@ -1,44 +1,19 @@
-import React from 'react';
-import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { useState } from 'react';
+import { ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 
-export default class PortButtonDropdown extends React.Component {
-  constructor(props) {
-    super(props);
+export default function PortButtonDropdown({ items }) {
+  const [open, setOpen] = useState(false);
 
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      dropdownOpen: false
-    };
-  }
-
-  toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
-
-  renderMenu(items) {
-    return (
+  return (
+    <ButtonDropdown className="port-dropdown" isOpen={open} toggle={() => setOpen(!open)}>
+      <DropdownToggle caret size="sm" aria-label="Actions" />
       <DropdownMenu>
-        {
-          items.map((item, index) => (
-              <DropdownItem key={index} {...item.handlers}>{item.text}</DropdownItem>
-            )
-          )
-        }
+        {items.map((item) => (
+          <DropdownItem key={item.text} {...item.handlers}>
+            {item.text}
+          </DropdownItem>
+        ))}
       </DropdownMenu>
-    )
-  }
-
-  render() {
-    const { items } = this.props;
-
-    return (
-      <ButtonDropdown className="port-dropdown" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle caret size="sm">
-        </DropdownToggle>
-        {this.renderMenu(items)}
-      </ButtonDropdown>
-    );
-  }
+    </ButtonDropdown>
+  );
 }
